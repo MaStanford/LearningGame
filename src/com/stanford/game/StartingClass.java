@@ -16,7 +16,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	 */
 	private static final long serialVersionUID = 427298476106571301L;
 	
-	private Player player;
+	private RedRobot player;
 	private Image image,character;
 	private Graphics second;
 	private URL base;
@@ -34,7 +34,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	@Override
 	public void init() {
 		// Set up applet
-		setSize(Constants.WINDOW_HEIGHT, Constants.WINDOW_WIDTH);
+		setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 		setBackground(Color.BLACK);
 		setFocusable(true);
 		// Get the frame from the parent
@@ -57,7 +57,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	public void start() {
 		super.start();
 
-		player = new Player();
+		player = new RedRobot();
 		
 		// Main game thread
 		Thread gameThread = new Thread(this);
@@ -85,7 +85,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(character, player.getPlayerCenterX() - 61, player.getPlayerCenterY() - 63, this);
+		g.drawImage(character, player.getPlayerCenterX(), player.getPlayerCenterY(), this);
 	}
 
 	@Override
