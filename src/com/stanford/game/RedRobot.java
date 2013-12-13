@@ -1,5 +1,7 @@
 package com.stanford.game;
 
+import java.net.URL;
+
 public class RedRobot extends PlayerCharacter {
 
 	// X and Y of the player
@@ -24,7 +26,13 @@ public class RedRobot extends PlayerCharacter {
 
 	// He has the hops
 	private static int JUMP_SPEED = Constants.JUMP_SPEED - 10;
+	//Drops like a rock
 	private static int FALL_MODULATOR = Constants.FALL_MODULATOR - 1;
+	//Slow robot
+	private static int MOVE_SPEED = Constants.MOVE_SPEED - 2;
+	
+	//The location of the robot
+	private String imageURL = "../data/character.png";
 
 	/**
 	 * Updates the players X and Y and speed
@@ -86,11 +94,11 @@ public class RedRobot extends PlayerCharacter {
 	}
 
 	public void moveRight() {
-		playerSpeedX = 6;
+		playerSpeedX = MOVE_SPEED;
 	}
 
 	public void moveLeft() {
-		playerSpeedX = -6;
+		playerSpeedX = -MOVE_SPEED;
 	}
 
 	public void stop() {
@@ -142,5 +150,13 @@ public class RedRobot extends PlayerCharacter {
 
 	public void setPlayerSpeedY(int playerSpeedY) {
 		this.playerSpeedY = playerSpeedY;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 }

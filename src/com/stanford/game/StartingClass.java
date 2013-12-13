@@ -43,6 +43,8 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		//Set the keylistener
 		addKeyListener(this);
 		
+		player = new RedRobot();
+		
 		try {
 			base = getDocumentBase();
 		} catch (Exception e) {
@@ -50,14 +52,12 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		}
 		
 		// Image Setups
-		character = getImage(base, "../data/character.png");
+		character = getImage(base, player.getImageURL());
 	}
 
 	@Override
 	public void start() {
 		super.start();
-
-		player = new RedRobot();
 		
 		// Main game thread
 		Thread gameThread = new Thread(this);
@@ -72,15 +72,12 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			second = image.getGraphics();
 		}
 
-
 		second.setColor(getBackground());
 		second.fillRect(0, 0, getWidth(), getHeight());
 		second.setColor(getForeground());
 		paint(second);
 
-
 		g.drawImage(image, 0, 0, this);
-
 	}
 	
 	@Override
@@ -111,29 +108,27 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			}
 		}
 	}
+	
+	boolean left,right,jump = false;
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
-			player.jump();
-			System.out.println("Key Up Pressed");
 			break;
 		case KeyEvent.VK_DOWN:
-			player.jump();
-			System.out.println("Key Down Pressed");
 			break;
 		case KeyEvent.VK_LEFT:
+			left = true;
 			player.moveLeft();
-			System.out.println("Key Left Pressed");
 			break;
 		case KeyEvent.VK_RIGHT:
 			player.moveRight();
-			System.out.println("Key Right Pressed");
+			right = true;
 			break;
 		case KeyEvent.VK_SPACE:
 			player.jump();
-			System.out.println("Key Space Pressed");
+			jump = true;
 			break;
 		}
 	}
@@ -142,24 +137,26 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
-			player.stop();
-			System.out.println("Key Up Released");
 			break;
 		case KeyEvent.VK_DOWN:
-			player.stop();
-			System.out.println("Key Down Released");
 			break;
 		case KeyEvent.VK_LEFT:
-			player.stop();
-			System.out.println("Key Left Released");
+			left = false;
+			if(!(left && right && jump)){
+				player.stop();
+			}
 			break;
 		case KeyEvent.VK_RIGHT:
-			player.stop();
-			System.out.println("Key Right Released");
+			right = false;
+			if(!(left && right && jump)){
+				player.stop();
+			}
 			break;
 		case KeyEvent.VK_SPACE:
-			player.stop();
-			System.out.println("Key Space Released");
+			jump = false;
+			if(!(left && right && jump)){
+				player.stop();
+			}
 			break;
 		}
 	}
