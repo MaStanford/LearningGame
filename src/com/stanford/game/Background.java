@@ -2,7 +2,56 @@ package com.stanford.game;
 
 public class Background {
 
-	public Background() {
+	private int bgX, bgY, speedX;
+	private String imageURL = "../data/background.png";
+
+	public Background(int x, int y) {
+		bgX = x;
+		bgY = y;
+		speedX = 0;
 	}
 
+	public void update() {
+		bgX += speedX;
+
+		if (bgX <= -2160) {
+			bgX += 4320;
+		}
+		
+		if (bgX >= 2160) {
+			bgX -= 4320;
+		}
+	}
+
+	public int getBgX() {
+		return bgX;
+	}
+
+	public int getBgY() {
+		return bgY;
+	}
+
+	public int getSpeedX() {
+		return speedX;
+	}
+
+	public void setBgX(int bgX) {
+		this.bgX = bgX;
+	}
+
+	public void setBgY(int bgY) {
+		this.bgY = bgY;
+	}
+
+	public void setSpeedX(int speedX) {
+		this.speedX = speedX;
+	}
+	
+	public String getImageURL() {
+		return imageURL ;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
 }

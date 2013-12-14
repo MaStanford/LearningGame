@@ -1,7 +1,5 @@
 package com.stanford.game;
 
-import java.net.URL;
-
 public class RedRobot extends PlayerCharacter {
 
 	// X and Y of the player
@@ -9,6 +7,11 @@ public class RedRobot extends PlayerCharacter {
 	private int playerCenterY = Constants.PLAYER_STARTING_Y - playerSizeY;
 	// If the player is jumping
 	private boolean isJumping = false;
+	//Key Input
+	private boolean jumped = false;
+    private boolean movingLeft = false;
+    private boolean movingRight = false;
+    private boolean ducked = false;
 
 	// Speed of the player
 	private int playerSpeedX = 0;
@@ -26,13 +29,15 @@ public class RedRobot extends PlayerCharacter {
 
 	// He has the hops
 	private static int JUMP_SPEED = Constants.JUMP_SPEED - 10;
-	//Drops like a rock
+	// Drops like a rock
 	private static int FALL_MODULATOR = Constants.FALL_MODULATOR - 1;
-	//Slow robot
+	// Slow robot
 	private static int MOVE_SPEED = Constants.MOVE_SPEED - 2;
-	
-	//The location of the robot
+
+	// The location of the robot
 	private String imageURL = "../data/character.png";
+
+
 
 	/**
 	 * Updates the players X and Y and speed
@@ -42,21 +47,28 @@ public class RedRobot extends PlayerCharacter {
 		/*
 		 * Moves Character or Scrolls Background accordingly.
 		 */
+		
+		// Backgrounds
+		Background bg1 = StartingClass.getBg1();
+		Background bg2 = StartingClass.getBg2();
 
 		// Updates X coord - Player is moving to the left with a negative speed
 		if (playerSpeedX < 0) {
 			playerCenterX += playerSpeedX;
-		} else if (playerSpeedX == 0) {
-			// Do not scroll Background
-		} else { // Speed must be 0 or greater
-			// Player is moving to the right with a postive speed
-			if (playerCenterX <= SCROLL_X_LIMIT) {
-				playerCenterX += playerSpeedX;
-			} else { // Player is beyond the scroll X limit for moving the
-						// background
-				// Scroll background
-			}
 		}
+		
+		if (playerSpeedX <= 0) {
+			bg1.setSpeedX(0);
+			bg2.setSpeedX(0);
+		}
+		if (playerCenterX <= SCROLL_X_LIMIT && playerSpeedX > 0) {
+			playerCenterX += playerSpeedX;
+		}
+		if (playerSpeedX > 0 && playerCenterX > SCROLL_X_LIMIT) {
+			bg1.setSpeedX(-MOVE_SPEED);
+			bg2.setSpeedX(-MOVE_SPEED);
+		}
+		
 
 		/*
 		 * Updates Y Position - Vertical position
@@ -77,7 +89,8 @@ public class RedRobot extends PlayerCharacter {
 
 		// Handles Jumping
 		if (isJumping == true) {
-			playerSpeedY += 1 + FALL_MODULATOR; // Positive speed makes the character move down
+			playerSpeedY += 1 + FALL_MODULATOR; // Positive speed makes the
+												// character move down
 
 			// Checks to see if the player hits the gound while jumping
 			if (playerCenterY + playerSpeedY >= FLOOR_Y) {
@@ -159,4 +172,36 @@ public class RedRobot extends PlayerCharacter {
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
 	}
+	
+	public boolean isJumped() {
+		return jumped;
+	}
+
+	public void setJumped(boolean jumped) {
+		this.jumped = jumped;
+	}
+
+	public boolean isMovingLeft() {
+		return movingLeft;
+	}
+
+	public void setMovingLeft(boolean movingLeft) {
+		this.movingLeft = movingLeft;
+	}
+
+	public boolean isMovingRight() {
+		return movingRight;
+	}
+
+	public void setMovingRight(boolean movingRight) {
+		this.movingRight = movingRight;
+	}
+
+	public boolean isDucked() {
+		return ducked;
+	}
+
+	public void setDucked(boolean ducked) {
+		this.ducked = ducked;
+	}	
 }

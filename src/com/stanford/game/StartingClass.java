@@ -17,9 +17,10 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	private static final long serialVersionUID = 427298476106571301L;
 	
 	private RedRobot player;
-	private Image image,character;
+	private Image image,character,background;
 	private Graphics second;
 	private URL base;
+	private static Background bg1, bg2;
 
 
 	public StartingClass() {
@@ -42,23 +43,25 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		gameframe.setTitle("2D Shooter");
 		//Set the keylistener
 		addKeyListener(this);
-		
-		player = new RedRobot();
-		
+				
 		try {
 			base = getDocumentBase();
 		} catch (Exception e) {
 			System.out.println("Exception on doc base");
 		}
 		
+		player = new RedRobot();
+		bg1 = new Background(0, 0);
+		bg2 = new Background(2160, 0);
+		
 		// Image Setups
 		character = getImage(base, player.getImageURL());
+		background = getImage(base, bg1.getImageURL());
 	}
 
 	@Override
 	public void start() {
-		super.start();
-		
+		super.start();		
 		// Main game thread
 		Thread gameThread = new Thread(this);
 		gameThread.start();
@@ -82,6 +85,8 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	
 	@Override
 	public void paint(Graphics g) {
+		g.drawImage(background, bg1.getBgX(), bg1.getBgY(), this);
+		g.drawImage(background, bg2.getBgX(), bg2.getBgY(), this);
 		g.drawImage(character, player.getPlayerCenterX(), player.getPlayerCenterY(), this);
 	}
 
@@ -100,6 +105,8 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		// Main game loop
 		while (true) {
 			player.update();
+			bg1.update();
+			bg2.update();
 			repaint(); // built in function to call the paint method
 			try {
 				Thread.sleep(17); // 17 ms is 60 fps
@@ -108,8 +115,6 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			}
 		}
 	}
-	
-	boolean left,right,jump = false;
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -119,16 +124,13 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		case KeyEvent.VK_DOWN:
 			break;
 		case KeyEvent.VK_LEFT:
-			left = true;
 			player.moveLeft();
 			break;
 		case KeyEvent.VK_RIGHT:
 			player.moveRight();
-			right = true;
 			break;
 		case KeyEvent.VK_SPACE:
 			player.jump();
-			jump = true;
 			break;
 		}
 	}
@@ -141,22 +143,10 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		case KeyEvent.VK_DOWN:
 			break;
 		case KeyEvent.VK_LEFT:
-			left = false;
-			if(!(left && right && jump)){
-				player.stop();
-			}
 			break;
 		case KeyEvent.VK_RIGHT:
-			right = false;
-			if(!(left && right && jump)){
-				player.stop();
-			}
 			break;
 		case KeyEvent.VK_SPACE:
-			jump = false;
-			if(!(left && right && jump)){
-				player.stop();
-			}
 			break;
 		}
 	}
@@ -164,4 +154,12 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
+	
+    public static Background getBg1() {
+        return bg1;
+    }
+
+    public static Background getBg2() {
+        return bg2;
+    }
 }
