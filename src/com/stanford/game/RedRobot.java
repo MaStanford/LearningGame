@@ -1,12 +1,16 @@
 package com.stanford.game;
 
+import java.util.ArrayList;
+
 public class RedRobot extends PlayerCharacter {
 
-	// X and Y of the player
+	// X and Y of the player - Really not center, should be called upper left corner
 	private int playerCenterX = Constants.PLAYER_STARTING_X;
 	private int playerCenterY = Constants.PLAYER_STARTING_Y - playerSizeY;
-	// If the player is jumping
-	private boolean isJumping = false;
+	
+	//Projectiles
+	private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+	
 	//Key Input
 	private boolean jumped = false;
     private boolean movingLeft = false;
@@ -20,6 +24,10 @@ public class RedRobot extends PlayerCharacter {
 	// Size of the character in pixels
 	private static int playerSizeX = 125;
 	private static int playerSizeY = 120;
+	
+	//Projectile offsets - The offset that will be added to the centerX and centerY for the origin of the projectile
+	private static int playerProjectileOffsetX = (playerSizeX) - 7;
+	private static int playerProjectileOffsetY = ((playerSizeY / 2) - 22);
 
 	// Bounds
 	private static int CEILING_Y = Constants.CEILING_Y + playerSizeY;
@@ -35,8 +43,9 @@ public class RedRobot extends PlayerCharacter {
 	private static int MOVE_SPEED = Constants.MOVE_SPEED - 2;
 
 	// The location of the robot
-	private String imageURL = "../data/character.png";
-
+	private String normalSprite = "../data/character.png";
+	private String jumpSprite = "../data/jumped.png";
+	private String duckSprite = "../data/down.png";
 
 
 	/**
@@ -57,16 +66,33 @@ public class RedRobot extends PlayerCharacter {
 			playerCenterX += playerSpeedX;
 		}
 		
+		//Player is moving backwards, dont scroll until we hit limit
 		if (playerSpeedX <= 0) {
 			bg1.setSpeedX(0);
 			bg2.setSpeedX(0);
 		}
+		
+		//Player is moving forward, dont scroll until we hit limit
+		if (playerSpeedX >= 0) {
+			bg1.setSpeedX(0);
+			bg2.setSpeedX(0);
+		}
+		
+		//Move right before scrolling
 		if (playerCenterX <= SCROLL_X_LIMIT && playerSpeedX > 0) {
 			playerCenterX += playerSpeedX;
 		}
+		
+		//Scroll Background - Moving right, scroll left
 		if (playerSpeedX > 0 && playerCenterX > SCROLL_X_LIMIT) {
 			bg1.setSpeedX(-MOVE_SPEED);
 			bg2.setSpeedX(-MOVE_SPEED);
+		}
+		
+		//Scroll Background - Moving left, scroll right
+		if (playerSpeedX < 0 && playerCenterX < SCROLL_X_MIN) {
+			bg1.setSpeedX(MOVE_SPEED);
+			bg2.setSpeedX(MOVE_SPEED);
 		}
 		
 
@@ -88,15 +114,12 @@ public class RedRobot extends PlayerCharacter {
 		}
 
 		// Handles Jumping
-		if (isJumping == true) {
-			playerSpeedY += 1 + FALL_MODULATOR; // Positive speed makes the
-												// character move down
-
-			// Checks to see if the player hits the gound while jumping
+		if (jumped == true) {
+			playerSpeedY += 1 + FALL_MODULATOR; 
 			if (playerCenterY + playerSpeedY >= FLOOR_Y) {
 				playerCenterY = FLOOR_Y;
 				playerSpeedY = 0;
-				isJumping = false;
+				jumped = false;
 			}
 		}
 
@@ -107,22 +130,53 @@ public class RedRobot extends PlayerCharacter {
 	}
 
 	public void moveRight() {
-		playerSpeedX = MOVE_SPEED;
+		if(ducked == false);
+			playerSpeedX = MOVE_SPEED;
 	}
 
 	public void moveLeft() {
-		playerSpeedX = -MOVE_SPEED;
+		if(ducked == false);
+			playerSpeedX = -MOVE_SPEED;
+	}
+	
+	public void stopLeft(boolean bool){
+		setMovingLeft(false);
+		stop();
+	}
+	
+	public void stopRight(boolean bool){
+		setMovingRight(false);
+		stop();
 	}
 
 	public void stop() {
-		playerSpeedX = 0;
+		if (isMovingRight() == false && isMovingLeft() == false) {
+            playerSpeedX = 0;
+        }
+
+        if (isMovingRight() == false && isMovingLeft() == true) {
+            moveLeft();
+        }
+
+        if (isMovingRight() == true && isMovingLeft() == false) {
+            moveRight();
+        }
 	}
 
 	public void jump() {
-		if (isJumping == false) {
+		if (jumped == false) {
 			playerSpeedY = JUMP_SPEED;
-			isJumping = true;
+			jumped = true;
 		}
+	}
+	
+ 	public void shoot() {
+		Projectile p = new Projectile(playerCenterX + playerProjectileOffsetX, playerCenterY + playerProjectileOffsetY);
+		projectiles.add(p);
+	}
+ 	
+	public ArrayList<Projectile> getProjectiles() {
+		return projectiles;
 	}
 
 	public int getPlayerCenterX() {
@@ -142,11 +196,11 @@ public class RedRobot extends PlayerCharacter {
 	}
 
 	public boolean isJumping() {
-		return isJumping;
+		return jumped;
 	}
 
 	public void setJumping(boolean isJumping) {
-		this.isJumping = isJumping;
+		this.jumped = isJumping;
 	}
 
 	public int getPlayerSpeedX() {
@@ -165,20 +219,36 @@ public class RedRobot extends PlayerCharacter {
 		this.playerSpeedY = playerSpeedY;
 	}
 
-	public String getImageURL() {
-		return imageURL;
-	}
-
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
-	
 	public boolean isJumped() {
 		return jumped;
 	}
 
 	public void setJumped(boolean jumped) {
 		this.jumped = jumped;
+	}
+
+	public String getNormalSprite() {
+		return normalSprite;
+	}
+
+	public void setNormalSprite(String normalSprite) {
+		this.normalSprite = normalSprite;
+	}
+
+	public String getJumpSprite() {
+		return jumpSprite;
+	}
+
+	public void setJumpSprite(String jumpSprite) {
+		this.jumpSprite = jumpSprite;
+	}
+
+	public String getDuckSprite() {
+		return duckSprite;
+	}
+
+	public void setDuckSprite(String duckSprite) {
+		this.duckSprite = duckSprite;
 	}
 
 	public boolean isMovingLeft() {
